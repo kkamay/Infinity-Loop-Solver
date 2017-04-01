@@ -1,6 +1,6 @@
 ﻿namespace Infinity_Loop_Solver
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -271,6 +271,7 @@
             this.BtnHelp.TabIndex = 4;
             this.BtnHelp.Text = "Help";
             this.BtnHelp.UseVisualStyleBackColor = true;
+            this.BtnHelp.Click += new System.EventHandler(this.BtnHelp_Click);
             // 
             // BtnRestart
             // 
@@ -1561,7 +1562,7 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.PictureBox_Click);
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -1573,7 +1574,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.BtnSolve);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Infinity Loop Solver";
             this.Load += new System.EventHandler(this.Form1_Load);

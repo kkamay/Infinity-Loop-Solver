@@ -3,12 +3,12 @@ using System.Windows.Forms;
 
 namespace Infinity_Loop_Solver
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         public Tile[,] TILE_SET;
         public bool CAN_BE_CLICKED;
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();            
         }
@@ -20,6 +20,12 @@ namespace Infinity_Loop_Solver
 
             InitializeTiles();
             AssignTileSetImages();
+        }
+
+        private void BtnHelp_Click(object sender, EventArgs e)
+        {
+            HelpForm helpForm = new HelpForm();
+            helpForm.ShowDialog();
         }
 
         private void BtnRestart_Click(object sender, EventArgs e)
@@ -110,6 +116,6 @@ namespace Infinity_Loop_Solver
 
                 pictureBox.Image = tile.Image;
             }
-        }
+        }        
     }
 }
