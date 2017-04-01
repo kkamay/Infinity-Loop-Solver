@@ -5,21 +5,30 @@ namespace Infinity_Loop_Solver
 {
     public partial class Form1 : Form
     {
-        public Tile[,] TILE_SET = new Tile[8, 13];
+        public Tile[,] TILE_SET;
+        public bool CAN_BE_CLICKED;
 
         public Form1()
         {
-            InitializeComponent();
+            InitializeComponent();            
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            TILE_SET = new Tile[13, 8];
+            CAN_BE_CLICKED = true;
+
             InitializeTiles();
+            AssignTileSetImages();
         }
 
         private void BtnRestart_Click(object sender, EventArgs e)
         {
-            InitializeTiles();
+            /*if(CAN_BE_CLICKED)
+            {
+                InitializeTiles();
+                AssignTileSet();
+            }*/
         }
 
         private void BtnSolve_Click(object sender, EventArgs e)
@@ -27,7 +36,52 @@ namespace Infinity_Loop_Solver
 
         }
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////
+        private void PictureBox_Click(object sender, EventArgs e)
+        {
+            if (CAN_BE_CLICKED)
+            {
+                CAN_BE_CLICKED = false;
+
+                PictureBox pictureBox = sender as PictureBox;
+
+                var name = pictureBox.Name;
+                var number = int.Parse(name.Substring(name.IndexOf('x') + 1)) - 1;
+
+                int row = number / TILE_SET.GetLength(1);
+                int col = number % TILE_SET.GetLength(1);
+                Tile tile = TILE_SET[row, col];
+
+                switch (tile.GetType().Name)
+                {
+                    case "Empty":
+                        TILE_SET[row, col] = new Line();
+                        break;
+                    case "Line":
+                        TILE_SET[row, col] = new Turn();
+                        break;
+                    case "Turn":
+                        TILE_SET[row, col] = new OneWay();
+                        break;
+                    case "OneWay":
+                        TILE_SET[row, col] = new Junction();
+                        break;
+                    case "Junction":
+                        TILE_SET[row, col] = new Roundabout();
+                        break;
+                    case "Roundabout":
+                        TILE_SET[row, col] = new Empty();
+                        break;
+                    default:
+                        break;
+                }
+
+                CAN_BE_CLICKED = true;            
+
+                AssignTileSetImages();
+            }
+        }
+
+        /*********************************************************************************************************/
 
         // Initialize all tiles to Empty
         private void InitializeTiles()
@@ -40,5 +94,22 @@ namespace Infinity_Loop_Solver
                 }
             }
         }        
+
+        // Assign TILE_SET images to PictureBoxes
+        private void AssignTileSetImages()
+        {
+            var count = TilePanel.Controls.Count;
+
+            for (int i = 0; i < count; i++)
+            {
+                int row = i / TILE_SET.GetLength(1);
+                int col = i % TILE_SET.GetLength(1);
+                Tile tile = TILE_SET[row, col];
+
+                PictureBox pictureBox = TilePanel.Controls[count - 1 - i] as PictureBox;
+
+                pictureBox.Image = tile.Image;
+            }
+        }
     }
 }
