@@ -19,7 +19,7 @@ namespace Infinity_Loop_Solver
             CAN_BE_CLICKED = true;
 
             InitializeTiles();
-            AssignTileSetImages();
+            DrawTiles();
         }
 
         private void BtnHelp_Click(object sender, EventArgs e)
@@ -30,11 +30,15 @@ namespace Infinity_Loop_Solver
 
         private void BtnRestart_Click(object sender, EventArgs e)
         {
-            /*if(CAN_BE_CLICKED)
+            if(CAN_BE_CLICKED)
             {
+                CAN_BE_CLICKED = false;
+
                 InitializeTiles();
-                AssignTileSet();
-            }*/
+                DrawTiles();
+
+                CAN_BE_CLICKED = true;
+            }
         }
 
         private void BtnSolve_Click(object sender, EventArgs e)
@@ -83,7 +87,7 @@ namespace Infinity_Loop_Solver
 
                 CAN_BE_CLICKED = true;            
 
-                AssignTileSetImages();
+                DrawTiles();
             }
         }
 
@@ -102,7 +106,7 @@ namespace Infinity_Loop_Solver
         }        
 
         // Assign TILE_SET images to PictureBoxes
-        private void AssignTileSetImages()
+        private void DrawTiles()
         {
             var count = TilePanel.Controls.Count;
 
