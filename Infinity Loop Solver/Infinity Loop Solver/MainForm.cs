@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace Infinity_Loop_Solver
@@ -6,7 +7,16 @@ namespace Infinity_Loop_Solver
     public partial class MainForm : Form
     {
         public Tile[,] TILE_SET;
+
         public bool CAN_BE_CLICKED;
+
+        // Global Tile Names
+        public const string EMPTY = "Empty";
+        public const string LINE = "Line";
+        public const string TURN = "Turn";
+        public const string ONEWAY = "OneWay";
+        public const string JUNCTION = "Junction";
+        public const string ROUNDABOUT = "Roundabout";
 
         public MainForm()
         {
@@ -43,7 +53,21 @@ namespace Infinity_Loop_Solver
 
         private void BtnSolve_Click(object sender, EventArgs e)
         {
+            if (CAN_BE_CLICKED)
+            {
+                CAN_BE_CLICKED = false;
 
+                // Shrinked level
+                var upLevel = 0;
+                var eastLevel = 0;
+                var downLevel = 0;
+                var westLevel = 0;
+                
+                // Get rid of unnecessary edges
+                var tileSet = ShrinkTileSet(ref upLevel, ref eastLevel, ref downLevel, ref westLevel);
+
+                CAN_BE_CLICKED = true;
+            }
         }
 
         private void PictureBox_Click(object sender, EventArgs e)
@@ -63,22 +87,22 @@ namespace Infinity_Loop_Solver
 
                 switch (tile.GetType().Name)
                 {
-                    case "Empty":
+                    case EMPTY:
                         TILE_SET[row, col] = new Line();
                         break;
-                    case "Line":
+                    case LINE:
                         TILE_SET[row, col] = new Turn();
                         break;
-                    case "Turn":
+                    case TURN:
                         TILE_SET[row, col] = new OneWay();
                         break;
-                    case "OneWay":
+                    case ONEWAY:
                         TILE_SET[row, col] = new Junction();
                         break;
-                    case "Junction":
+                    case JUNCTION:
                         TILE_SET[row, col] = new Roundabout();
                         break;
-                    case "Roundabout":
+                    case ROUNDABOUT:
                         TILE_SET[row, col] = new Empty();
                         break;
                     default:
@@ -120,6 +144,138 @@ namespace Infinity_Loop_Solver
 
                 pictureBox.Image = tile.Image;
             }
-        }        
+        }
+
+        // Shrink the TILE_SET from all directions to get rid of empty tiles
+        private Tile[,] ShrinkTileSet(ref int upLevel, ref int eastLevel, ref int downLevel, ref int westLevel)
+        {
+            // Convert to 2D linkedlist
+            var tileSet = new LinkedList<LinkedList<Tile>>();
+
+            for (int r = 0; r < TILE_SET.GetLength(0); r++)
+            {
+                tileSet.AddLast(new LinkedList<Tile>());
+
+                for (int c = 0; c < TILE_SET.GetLength(1); c++)
+                {
+                    tileSet.Last.Value.AddLast(TILE_SET[r, c]);
+                }
+            }
+
+            // Shrink from up
+            var stop = false;
+
+            for (int r = 0; r < tileSet.Count; r++)
+            {
+                foreach (var item in tileSet.First.Value)
+                {
+                    if (item.GetType().Name != EMPTY)
+                        stop = true;
+                }
+
+                if (stop)
+                    break;
+                else
+                {
+                    tileSet.RemoveFirst();
+                    upLevel++;
+                }
+            }
+
+            // Shrink from down
+            stop = false;
+
+            for (int r = tileSet.Count - 1; r >= 0; r--)
+            {
+                foreach (var item in tileSet.Last.Value)
+                {
+                    if (item.GetType().Name != EMPTY)
+                        stop = true;
+                }
+
+                if (stop)
+                    break;
+                else
+                {
+                    tileSet.RemoveLast();
+                    downLevel++;
+                }
+            }
+
+            // Shrink from east
+            stop = false;
+
+            for (int c = 0; c < tileSet.First.Value.Count; c++)
+            {
+                foreach (var item in tileSet)
+                {
+                    if (item.First.Value.GetType().Name != EMPTY)
+                        stop = true;
+                }
+
+                if (stop)
+                    break;
+                else
+                {
+                    foreach (var item in tileSet)
+                    {
+                        item.RemoveFirst();
+                    }
+
+                    westLevel++;
+                }
+            }
+
+            // Shrink from west
+            stop = false;
+
+            for (int c = tileSet.First.Value.Count - 1; c >= 0; c--)
+            {
+                foreach (var item in tileSet)
+                {
+                    if (item.Last.Value.GetType().Name != EMPTY)
+                        stop = true;
+                }
+
+                if (stop)
+                    break;
+                else
+                {
+                    foreach (var item in tileSet)
+                    {
+                        item.RemoveLast();
+                    }
+
+                    eastLevel++;
+                }
+            }
+
+            // Convert to 2D array
+            var res = new Tile[tileSet.Count, tileSet.First.Value.Count];
+
+            var list = tileSet.First;
+
+            for (int r = 0; r < res.GetLength(0); r++)
+            {
+                var tile = list.Value.First;
+
+                for (int c = 0; c < res.GetLength(1); c++)
+                {
+                    res[r, c] = tile.Value;
+
+                    tile = tile.Next;
+                }
+
+                list = list.Next;
+            }
+
+            return res;
+        }
+
+        //// Grow the shrinked grid from all directions to achieve the final form of the TILE_SET
+        //private Tile[,] GrowTileSet(int upLevel, int eastLevel, int downLevel, int westLevel)
+        //{
+
+        //}
     }
 }
