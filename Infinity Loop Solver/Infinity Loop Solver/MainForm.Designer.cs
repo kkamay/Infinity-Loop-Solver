@@ -246,10 +246,10 @@
             // 
             // BtnSolve
             // 
-            this.BtnSolve.Font = new System.Drawing.Font("Goudy Old Style", 16.2F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BtnSolve.Location = new System.Drawing.Point(82, 12);
+            this.BtnSolve.Font = new System.Drawing.Font("Rockwell", 16.2F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnSolve.Location = new System.Drawing.Point(95, 12);
             this.BtnSolve.Name = "BtnSolve";
-            this.BtnSolve.Size = new System.Drawing.Size(259, 53);
+            this.BtnSolve.Size = new System.Drawing.Size(234, 53);
             this.BtnSolve.TabIndex = 2;
             this.BtnSolve.Text = "SOLVE!";
             this.BtnSolve.UseVisualStyleBackColor = true;
@@ -265,9 +265,10 @@
             // 
             // BtnHelp
             // 
+            this.BtnHelp.Font = new System.Drawing.Font("Rockwell", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.BtnHelp.Location = new System.Drawing.Point(12, 12);
             this.BtnHelp.Name = "BtnHelp";
-            this.BtnHelp.Size = new System.Drawing.Size(65, 53);
+            this.BtnHelp.Size = new System.Drawing.Size(77, 53);
             this.BtnHelp.TabIndex = 4;
             this.BtnHelp.Text = "Help";
             this.BtnHelp.UseVisualStyleBackColor = true;
@@ -275,9 +276,10 @@
             // 
             // BtnRestart
             // 
-            this.BtnRestart.Location = new System.Drawing.Point(347, 12);
+            this.BtnRestart.Font = new System.Drawing.Font("Rockwell", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BtnRestart.Location = new System.Drawing.Point(335, 12);
             this.BtnRestart.Name = "BtnRestart";
-            this.BtnRestart.Size = new System.Drawing.Size(65, 53);
+            this.BtnRestart.Size = new System.Drawing.Size(77, 53);
             this.BtnRestart.TabIndex = 5;
             this.BtnRestart.Text = "Restart";
             this.BtnRestart.UseVisualStyleBackColor = true;

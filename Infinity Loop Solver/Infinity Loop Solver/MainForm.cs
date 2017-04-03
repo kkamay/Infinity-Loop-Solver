@@ -20,7 +20,7 @@ namespace Infinity_Loop_Solver
 
         public MainForm()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -40,7 +40,7 @@ namespace Infinity_Loop_Solver
 
         private void BtnRestart_Click(object sender, EventArgs e)
         {
-            if(CAN_BE_CLICKED)
+            if (CAN_BE_CLICKED)
             {
                 CAN_BE_CLICKED = false;
 
@@ -59,12 +59,25 @@ namespace Infinity_Loop_Solver
 
                 // Shrinked level
                 var upLevel = 0;
-                var eastLevel = 0;
-                var downLevel = 0;
                 var westLevel = 0;
-                
+
                 // Get rid of unnecessary edges
-                var tileSet = ShrinkTileSet(ref upLevel, ref eastLevel, ref downLevel, ref westLevel);
+                var tileSet = ShrinkTileSet(ref upLevel, ref westLevel);
+
+
+
+                // Finalize the solution and transfer it to the TILE_SET
+                GrowTileSet(tileSet, upLevel, westLevel);
+
+                for (int r = 0; r < TILE_SET.GetLength(0); r++)
+                {
+                    for (int c = 0; c < TILE_SET.GetLength(1); c++)
+                    {
+                        Console.Write(TILE_SET[r, c].GetType().Name + " ");
+                    }
+
+                    Console.WriteLine();
+                }
 
                 CAN_BE_CLICKED = true;
             }
@@ -109,7 +122,7 @@ namespace Infinity_Loop_Solver
                         break;
                 }
 
-                CAN_BE_CLICKED = true;            
+                CAN_BE_CLICKED = true;
 
                 DrawTiles();
             }
@@ -127,7 +140,7 @@ namespace Infinity_Loop_Solver
                     TILE_SET[r, c] = new Empty();
                 }
             }
-        }        
+        }
 
         // Assign TILE_SET images to PictureBoxes
         private void DrawTiles()
@@ -147,7 +160,7 @@ namespace Infinity_Loop_Solver
         }
 
         // Shrink the TILE_SET from all directions to get rid of empty tiles
-        private Tile[,] ShrinkTileSet(ref int upLevel, ref int eastLevel, ref int downLevel, ref int westLevel)
+        private Tile[,] ShrinkTileSet(ref int upLevel, ref int westLevel)
         {
             // Convert to 2D linkedlist
             var tileSet = new LinkedList<LinkedList<Tile>>();
@@ -196,10 +209,7 @@ namespace Infinity_Loop_Solver
                 if (stop)
                     break;
                 else
-                {
                     tileSet.RemoveLast();
-                    downLevel++;
-                }
             }
 
             // Shrink from east
@@ -245,8 +255,6 @@ namespace Infinity_Loop_Solver
                     {
                         item.RemoveLast();
                     }
-
-                    eastLevel++;
                 }
             }
 
@@ -272,10 +280,17 @@ namespace Infinity_Loop_Solver
             return res;
         }
 
-        //// Grow the shrinked grid from all directions to achieve the final form of the TILE_SET
-        //private Tile[,] GrowTileSet(int upLevel, int eastLevel, int downLevel, int westLevel)
-        //{
-
-        //}
+        // "Grow" the shrinked grid from all directions to achieve the final form of the TILE_SET i.e transfer
+        // the solution to the TILE_SET
+        private void GrowTileSet(Tile[,] tileSet, int upLevel, int westLevel)
+        {
+            for (int r = 0; r < tileSet.GetLength(0); r++)
+            {
+                for (int c = 0; c < tileSet.GetLength(1); c++)
+                {
+                    TILE_SET[upLevel + r, westLevel + c] = tileSet[r, c];
+                }
+            }
+        }
     }
 }
