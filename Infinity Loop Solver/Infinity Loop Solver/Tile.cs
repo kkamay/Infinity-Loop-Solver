@@ -7,19 +7,19 @@ namespace Infinity_Loop_Solver
     public class Tile
     {
         // Tile's position is finalized
-        protected bool Finalized { get; set; }
+        public bool Finalized { get; set; }
 
         // Edges exist
-        protected bool North { get; set; }
-        protected bool East { get; set; }
-        protected bool South { get; set; }
-        protected bool West { get; set; }
+        public bool North { get; set; }
+        public bool East { get; set; }
+        public bool South { get; set; }
+        public bool West { get; set; }
 
         // Edges connected
-        protected bool NorthC { get; set; }
-        protected bool EastC { get; set; }
-        protected bool SouthC { get; set; }
-        protected bool WestC { get; set; }
+        public bool NorthC { get; set; }
+        public bool EastC { get; set; }
+        public bool SouthC { get; set; }
+        public bool WestC { get; set; }
 
         // Tile image
         public Bitmap Image { get; set; }
@@ -28,7 +28,10 @@ namespace Infinity_Loop_Solver
         public int? Type { get; set; }
 
         // Rotates the tile in clockwise direction
-        public void Rotate() { }
+        public virtual void Rotate() { }
+
+        // Rotates the tile until the specific type is found
+        public virtual void Rotate(int Type) { }
     }
 
     #endregion
@@ -42,7 +45,7 @@ namespace Infinity_Loop_Solver
         {
             Finalized = true;
             North = East = South = West = false;
-            NorthC = EastC = SouthC = WestC = true;
+            NorthC = EastC = SouthC = WestC = false;
             Image = Resource.E;
             Type = null;
         }
@@ -65,7 +68,7 @@ namespace Infinity_Loop_Solver
             Type = 0;
         }
 
-        public new void Rotate()
+        public override void Rotate()
         {
             if (Type == 0)
             {
@@ -81,6 +84,15 @@ namespace Infinity_Loop_Solver
                 Image = Resource.L0;
                 Type = 0;
             }
+        }
+
+        public override void Rotate(int Type)
+        {
+            if (Type < 0 || Type > 1)
+                return;
+
+            while (this.Type != Type)
+                Rotate();
         }
     }
 
@@ -101,7 +113,7 @@ namespace Infinity_Loop_Solver
             Type = 0;
         }
 
-        public new void Rotate()
+        public override void Rotate()
         {
             switch (Type)
             {
@@ -133,6 +145,15 @@ namespace Infinity_Loop_Solver
                     break;
             }
         }
+
+        public override void Rotate(int Type)
+        {
+            if (Type < 0 || Type > 3)
+                return;
+
+            while (this.Type != Type)
+                Rotate();
+        }
     }
 
     #endregion
@@ -152,7 +173,7 @@ namespace Infinity_Loop_Solver
             Type = 0;
         }
 
-        public new void Rotate()
+        public override void Rotate()
         {
             switch (Type)
             {
@@ -184,6 +205,15 @@ namespace Infinity_Loop_Solver
                     break;
             }
         }
+
+        public override void Rotate(int Type)
+        {
+            if (Type < 0 || Type > 3)
+                return;
+
+            while (this.Type != Type)
+                Rotate();
+        }
     }
 
     #endregion
@@ -203,7 +233,7 @@ namespace Infinity_Loop_Solver
             Type = 0;
         }
 
-        public new void Rotate()
+        public override void Rotate()
         {
             switch (Type)
             {
@@ -234,6 +264,15 @@ namespace Infinity_Loop_Solver
                 default:
                     break;
             }
+        }
+
+        public override void Rotate(int Type)
+        {
+            if (Type < 0 || Type > 3)
+                return;
+
+            while (this.Type != Type)
+                Rotate();
         }
     }
 

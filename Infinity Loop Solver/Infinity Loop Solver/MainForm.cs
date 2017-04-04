@@ -64,20 +64,16 @@ namespace Infinity_Loop_Solver
                 // Get rid of unnecessary edges
                 var tileSet = ShrinkTileSet(ref upLevel, ref westLevel);
 
+                // Make the problem easier
+                FixSideTiles(tileSet);
+
 
 
                 // Finalize the solution and transfer it to the TILE_SET
                 GrowTileSet(tileSet, upLevel, westLevel);
 
-                for (int r = 0; r < TILE_SET.GetLength(0); r++)
-                {
-                    for (int c = 0; c < TILE_SET.GetLength(1); c++)
-                    {
-                        Console.Write(TILE_SET[r, c].GetType().Name + " ");
-                    }
-
-                    Console.WriteLine();
-                }
+                // Draw the solution
+                DrawTiles();
 
                 CAN_BE_CLICKED = true;
             }
@@ -122,9 +118,11 @@ namespace Infinity_Loop_Solver
                         break;
                 }
 
-                CAN_BE_CLICKED = true;
+                tile = TILE_SET[row, col];
 
-                DrawTiles();
+                pictureBox.Image = tile.Image;
+
+                CAN_BE_CLICKED = true;
             }
         }
 
@@ -291,6 +289,188 @@ namespace Infinity_Loop_Solver
                     TILE_SET[upLevel + r, westLevel + c] = tileSet[r, c];
                 }
             }
+        }
+
+        // Fixes the available side tiles according to a specific strategy for each tile type
+        private void FixSideTiles(Tile[,] tileSet)
+        {
+            var rowNum = tileSet.GetLength(0);
+            var colNum = tileSet.GetLength(1);
+
+            // Iterate side tiles for Line and Junction
+            for (int r = 0; r < rowNum; r++)
+            {
+
+            }
+
+            for (int c = 0; c < colNum; c++)
+            {
+
+            }
+
+            // Iterate side tiles for Turn
+            for (int r = 1; r < rowNum - 1; r++)
+            {
+
+            }
+
+            for (int c = 1; c < colNum - 1; c++)
+            {
+
+            }
+
+            // Iterate side tiles for Oneway
+            for (int r = 0; r < rowNum; r++)
+            {
+                var westTile = tileSet[r, 0];
+
+                if (westTile.GetType().Name == ONEWAY)
+                {
+                    if (r == 0 && r + 1 < rowNum && IsFinalizedAndNotEmpty(tileSet[r + 1, 0]))
+                    {
+                        if (tileSet[r + 1, 0].North)
+                        {
+                            westTile.Rotate(2);
+                            westTile.Finalized = true;
+                        }
+                    }
+                    else if (r == rowNum - 1 && r - 1 >= 0 && IsFinalizedAndNotEmpty(tileSet[r - 1, 0]))
+                    {
+                        if (tileSet[r - 1, 0].South)
+                        {
+                            westTile.Rotate(0);
+                            westTile.Finalized = true;
+                        }
+                    }
+                    else if (0 < r && r < rowNum - 1)
+                    {
+                        if (IsFinalizedAndNotEmpty(tileSet[r - 1, 0]) && tileSet[r - 1, 0].South)
+                        {
+                            westTile.Rotate(0);
+                            westTile.Finalized = true;
+                        }
+                        if (IsFinalizedAndNotEmpty(tileSet[r + 1, 0]) && tileSet[r + 1, 0].North)
+                        {
+                            westTile.Rotate(2);
+                            westTile.Finalized = true;
+                        }
+                    }
+                }
+
+                var eastTile = tileSet[r, colNum - 1];
+
+                if (eastTile.GetType().Name == ONEWAY)
+                {
+                    if (r == 0 && r + 1 < rowNum && IsFinalizedAndNotEmpty(tileSet[r + 1, colNum - 1]))
+                    {
+                        if (tileSet[r + 1, colNum - 1].North)
+                        {
+                            eastTile.Rotate(2);
+                            eastTile.Finalized = true;
+                        }
+                    }
+                    else if (r == rowNum - 1 && r - 1 >= 0 && IsFinalizedAndNotEmpty(tileSet[r - 1, colNum - 1]))
+                    {
+                        if (tileSet[r - 1, colNum - 1].South)
+                        {
+                            eastTile.Rotate(0);
+                            eastTile.Finalized = true;
+                        }
+                    }
+                    else if (0 < r && r < rowNum - 1)
+                    {
+                        if (IsFinalizedAndNotEmpty(tileSet[r - 1, colNum - 1]) && tileSet[r - 1, colNum - 1].South)
+                        {
+                            eastTile.Rotate(0);
+                            eastTile.Finalized = true;
+                        }
+                        if (IsFinalizedAndNotEmpty(tileSet[r + 1, colNum - 1]) && tileSet[r + 1, colNum - 1].North)
+                        {
+                            eastTile.Rotate(2);
+                            eastTile.Finalized = true;
+                        }
+                    }
+                }
+            }
+
+            for (int c = 0; c < colNum; c++)
+            {
+                var upTile = tileSet[0, c];
+
+                if (upTile.GetType().Name == ONEWAY)
+                {
+                    if (c == 0 && c + 1 < colNum && IsFinalizedAndNotEmpty(tileSet[0, c + 1]))
+                    {
+                        if(tileSet[0, c + 1].West)
+                        {
+                            upTile.Rotate(1);
+                            upTile.Finalized = true;
+                        }
+                    }
+                    else if (c == colNum - 1 && c - 1 >= 0 && IsFinalizedAndNotEmpty(tileSet[0, c - 1]))
+                    {
+                        if (tileSet[0, c - 1].East)
+                        {
+                            upTile.Rotate(3);
+                            upTile.Finalized = true;
+                        }
+                    }
+                    else if (0 < c && c < colNum - 1)
+                    {
+                        if(IsFinalizedAndNotEmpty(tileSet[0, c - 1]) && tileSet[0, c - 1].East)
+                        {
+                            upTile.Rotate(3);
+                            upTile.Finalized = true;
+                        }
+                        if(IsFinalizedAndNotEmpty(tileSet[0, c + 1]) && tileSet[0, c - 1].West)
+                        {
+                            upTile.Rotate(1);
+                            upTile.Finalized = true;
+                        }
+                    }
+                }
+
+                var downTile = tileSet[rowNum - 1, c];
+
+                if (downTile.GetType().Name == ONEWAY)
+                {
+                    if (c == 0 && c + 1 < colNum && IsFinalizedAndNotEmpty(tileSet[rowNum - 1, c + 1]))
+                    {
+                        if (tileSet[rowNum - 1, c + 1].West)
+                        {
+                            downTile.Rotate(1);
+                            downTile.Finalized = true;
+                        }
+                    }
+                    else if (c == colNum - 1 && c - 1 >= 0 && IsFinalizedAndNotEmpty(tileSet[rowNum - 1, c - 1]))
+                    {
+                        if (tileSet[rowNum - 1, c - 1].East)
+                        {
+                            upTile.Rotate(3);
+                            upTile.Finalized = true;
+                        }
+                    }
+                    else if (0 < c && c < colNum - 1)
+                    {
+                        if (IsFinalizedAndNotEmpty(tileSet[rowNum - 1, c - 1]) && tileSet[rowNum - 1, c - 1].East)
+                        {
+                            upTile.Rotate(3);
+                            upTile.Finalized = true;
+                        }
+                        if (IsFinalizedAndNotEmpty(tileSet[rowNum - 1, c + 1]) && tileSet[rowNum - 1, c - 1].West)
+                        {
+                            upTile.Rotate(1);
+                            upTile.Finalized = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Returns true if the given tile is Finalized and its type is not Empty
+        private bool IsFinalizedAndNotEmpty(Tile tile)
+        {
+            return tile.Finalized && tile.GetType().Name != EMPTY;
         }
     }
 }
