@@ -6,8 +6,10 @@ namespace Infinity_Loop_Solver
 {
     public partial class MainForm : Form
     {
+        // Structure that holds the main game data
         public Tile[,] TILE_SET;
 
+        // Defines whether components can be clicked
         public bool CAN_BE_CLICKED;
 
         // Global Tile Names
@@ -300,23 +302,167 @@ namespace Infinity_Loop_Solver
             // Iterate side tiles for Line and Junction
             for (int r = 0; r < rowNum; r++)
             {
+                var westTile = tileSet[r, 0];
 
+                if (westTile.GetType().Name == LINE || westTile.GetType().Name == JUNCTION)
+                {
+                    westTile.Rotate(0);
+                    westTile.Finalized = true;
+                }
+
+                var eastTile = tileSet[r, colNum - 1];
+
+                if (eastTile.GetType().Name == LINE || eastTile.GetType().Name == JUNCTION)
+                {
+                    var type = eastTile.GetType().Name == LINE ? 0 : 2;
+                    eastTile.Rotate(type);
+                    eastTile.Finalized = true;
+                }
             }
 
             for (int c = 0; c < colNum; c++)
             {
+                var upTile = tileSet[0, c];
 
+                if (upTile.GetType().Name == LINE || upTile.GetType().Name == JUNCTION)
+                {
+                    upTile.Rotate(1);
+                    upTile.Finalized = true;
+                }
+
+                var downTile = tileSet[rowNum - 1, c];
+
+                if (downTile.GetType().Name == LINE || downTile.GetType().Name == JUNCTION)
+                {
+                    var type = downTile.GetType().Name == LINE ? 1 : 3;
+                    downTile.Rotate(type);
+                    downTile.Finalized = true;
+                }
+            }
+
+            // Fix corner tiles for Turn
+            var upLeft = tileSet[0, 0];
+            var upRight = tileSet[0, colNum - 1];
+            var downLeft = tileSet[rowNum - 1, 0];
+            var downRight = tileSet[rowNum - 1, colNum - 1];
+
+            if(upLeft.GetType().Name == TURN)
+            {
+                upLeft.Rotate(1);
+                upLeft.Finalized = true;
+            }
+
+            if (upRight.GetType().Name == TURN)
+            {
+                upRight.Rotate(2);
+                upRight.Finalized = true;
+            }
+
+            if (downLeft.GetType().Name == TURN)
+            {
+                downLeft.Rotate(0);
+                downLeft.Finalized = true;
+            }
+
+            if (downRight.GetType().Name == TURN)
+            {
+                downRight.Rotate(3);
+                downRight.Finalized = true;
             }
 
             // Iterate side tiles for Turn
             for (int r = 1; r < rowNum - 1; r++)
             {
+                var westTile = tileSet[r, 0];
 
+                if (westTile.GetType().Name == TURN)
+                {
+                    if (IsFinalizedAndNotEmpty(tileSet[r - 1, 0]))
+                    {
+                        if (tileSet[r - 1, 0].South)
+                        {
+                            westTile.Rotate(0);
+                            westTile.Finalized = true;
+                        }
+                    }
+                    if (IsFinalizedAndNotEmpty(tileSet[r + 1, 0]))
+                    {
+                        if (tileSet[r + 1, 0].North)
+                        {
+                            westTile.Rotate(1);
+                            westTile.Finalized = true;
+                        }
+                    }
+                }
+
+                var eastTile = tileSet[r, colNum - 1];
+
+                if (eastTile.GetType().Name == TURN)
+                {
+                    if (IsFinalizedAndNotEmpty(tileSet[r - 1, colNum - 1]))
+                    {
+                        if (tileSet[r - 1, colNum - 1].South)
+                        {
+                            eastTile.Rotate(3);
+                            eastTile.Finalized = true;
+                        }
+                    }
+                    if (IsFinalizedAndNotEmpty(tileSet[r + 1, colNum - 1]))
+                    {
+                        if (tileSet[r + 1, colNum - 1].North)
+                        {
+                            eastTile.Rotate(2);
+                            eastTile.Finalized = true;
+                        }
+                    }
+                }
             }
 
             for (int c = 1; c < colNum - 1; c++)
             {
+                var upTile = tileSet[0, c];
 
+                if (upTile.GetType().Name == TURN)
+                {
+                    if (IsFinalizedAndNotEmpty(tileSet[0, c - 1]))
+                    {
+                        if (tileSet[0, c - 1].East)
+                        {
+                            upTile.Rotate(2);
+                            upTile.Finalized = true;
+                        }
+                    }
+                    if (IsFinalizedAndNotEmpty(tileSet[0, c + 1]))
+                    {
+                        if (tileSet[0, c + 1].West)
+                        {
+                            upTile.Rotate(1);
+                            upTile.Finalized = true;
+                        }
+                    }
+                }
+
+                var downTile = tileSet[rowNum - 1, c];
+
+                if(downTile.GetType().Name == TURN)
+                {
+                    if (IsFinalizedAndNotEmpty(tileSet[rowNum - 1, c - 1]))
+                    {
+                        if (tileSet[rowNum - 1, c - 1].East)
+                        {
+                            downTile.Rotate(3);
+                            downTile.Finalized = true;
+                        }
+                    }
+                    if (IsFinalizedAndNotEmpty(tileSet[rowNum - 1, c + 1]))
+                    {
+                        if (tileSet[rowNum - 1, c + 1].West)
+                        {
+                            downTile.Rotate(0);
+                            downTile.Finalized = true;
+                        }
+                    }
+                }
             }
 
             // Iterate side tiles for Oneway
@@ -446,21 +592,21 @@ namespace Infinity_Loop_Solver
                     {
                         if (tileSet[rowNum - 1, c - 1].East)
                         {
-                            upTile.Rotate(3);
-                            upTile.Finalized = true;
+                            downTile.Rotate(3);
+                            downTile.Finalized = true;
                         }
                     }
                     else if (0 < c && c < colNum - 1)
                     {
                         if (IsFinalizedAndNotEmpty(tileSet[rowNum - 1, c - 1]) && tileSet[rowNum - 1, c - 1].East)
                         {
-                            upTile.Rotate(3);
-                            upTile.Finalized = true;
+                            downTile.Rotate(3);
+                            downTile.Finalized = true;
                         }
                         if (IsFinalizedAndNotEmpty(tileSet[rowNum - 1, c + 1]) && tileSet[rowNum - 1, c - 1].West)
                         {
-                            upTile.Rotate(1);
-                            upTile.Finalized = true;
+                            downTile.Rotate(1);
+                            downTile.Finalized = true;
                         }
                     }
                 }
